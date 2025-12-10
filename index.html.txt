@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sales Deal Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app-shell">
+  <header>
+    <div>
+      <h1>Sales Deal Calculator</h1>
+      <p>Estimate price, margin and pre-approved discount based on usage and add-ons.</p>
+    </div>
+    <div class="pill">
+      <span class="pill-dot"></span>
+      Internal tool • Enterprise plans only
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- LEFT: INPUTS -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Deal setup</div>
+          <div class="card-subtitle">Customer profile, volume and sophistication</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="customerName">Customer name</label>
+          <input id="customerName" type="text" placeholder="ACME Corp" />
+        </div>
+        <div class="field">
+          <label for="salesStructure">Sales structure</label>
+          <select id="salesStructure">
+            <option value="Small">Small</option>
+            <option value="Mid-Market">Mid-Market</option>
+            <option value="Enterprise">Enterprise</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="cardsPerMonth"># of cards per month</label>
+          <input id="cardsPerMonth" type="number" min="0" step="1" placeholder="e.g. 2000" />
+          <div class="hint">Used for usage recommendations and plan coverage.</div>
+        </div>
+        <div class="field">
+          <label for="sophistication">Level of sophistication</label>
+          <select id="sophistication">
+            <option value="Basic">Basic - 50</option>
+            <option value="Mid">Mid - 75</option>
+            <option value="Advanced">Advanced - 90</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-title">Usage per card</div>
+      <div class="grid-4">
+        <div class="field">
+          <label for="ajPerCard">Automation Jobs per card</label>
+          <input id="ajPerCard" type="number" min="0" step="0.01" />
+          <div class="hint" id="ajSuggestionHint">Suggested: -</div>
+        </div>
+        <div class="field">
+          <label for="integrationsPerCard">Integrations per card (APIs + CIs)</label>
+          <input id="integrationsPerCard" type="number" readonly />
+          <div class="hint" id="intSuggestionHint">Suggested: -</div>
+        </div>
+        <div class="field">
+          <label for="apisPerCard">APIs per card</label>
+          <input id="apisPerCard" type="number" min="0" step="0.01" />
+        </div>
+        <div class="field">
+          <label for="cisPerCard">Custom integrations per card</label>
+          <input id="cisPerCard" type="number" min="0" step="0.01" />
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="field">
+          <label for="aiPerCard">AI agent per card (AI credits)</label>
+          <input id="aiPerCard" type="number" min="0" step="0.01" />
+        </div>
+        <div class="field">
+          <label for="pipesignPerCard">Pipesign per card</label>
+          <input id="pipesignPerCard" type="number" min="0" step="0.01" />
+        </div>
+      </div>
+
+      <div class="section-title">License</div>
+      <div class="grid-3">
+        <div class="field">
+          <label for="licenseType">License SKU</label>
+          <select id="licenseType">
+            <option value="Enterprise License">Enterprise License</option>
+            <option value="Enterprise License - Annual pmt">Enterprise License - Annual pmt</option>
+            <option value="Enterprise Plus">Enterprise Plus</option>
+            <option value="Enterprise Plus - Annual pmt">Enterprise Plus - Annual pmt</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="paidUsers"># of paid users</label>
+          <input id="paidUsers" type="number" min="0" step="1" />
+        </div>
+        <div class="field">
+          <label for="licenseDiscount">License discount (%)</label>
+          <input id="licenseDiscount" type="number" min="0" max="100" step="0.1" placeholder="e.g. 10" />
+        </div>
+      </div>
+      <div class="field">
+        <label>License list price (per user / month)</label>
+        <input id="licensePriceDisplay" type="text" readonly />
+        <div class="hint">Enterprise License includes 2,000 AJs and 10,000 API calls.</div>
+      </div>
+
+      <div class="section-title">Add-ons (two lines each: line 2 can be 100% discount / bonus)</div>
+
+      <!-- Automation Jobs -->
+      <div class="field mt-4">
+        <span class="table-chip">Automation Jobs</span>
+        <div class="mt-4">
+          <label>Line 1 — paid</label>
+          <div class="grid-3">
+            <select id="ajSku1"></select>
+            <input id="ajQty1" type="number" min="0" step="1" placeholder="# packs" />
+            <input id="ajDisc1" type="number" min="0" max="100" step="0.1" placeholder="% discount" />
+          </div>
+        </div>
+        <div class="mt-4">
+          <label>Line 2 — bonus (can be 100% off)</label>
+          <div class="grid-3">
+            <select id="ajSku2"></select>
+            <input id="ajQty2" type="number" min="0" step="1" placeholder="# packs" />
+            <input id="ajDisc2" type="number" min="0" max="100" step="0.1" placeholder="% discount" />
+          </div>
+        </div>
+      </div>
+
+      <!-- API Calls -->
+      <div class="field mt-4">
+        <span class="table-chip">API Calls</span>
+        <div class="mt-4">
+          <label>Line 1</label>
+          <div class="grid-3">
+            <select id="apiSku1"></select>
+            <input id="apiQty1" type="number" min="0" step="1" placeholder="# packs" />
+            <input id="apiDisc1" type="number" min="0" max="100" step="0.1" placeholder="% discount" />
+          </div>
+        </div>
+        <div class="mt-4">
+          <label>Line 2</label>
+          <div class="grid-3">
+            <select id="apiSku2"></select>
+            <input id="apiQty2" type="number" min="0" step="1" placeholder="# packs" />
+            <input id="apiDisc2" type="number" min="0" max="100" step="0.1" placeholder="% discount" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Integrations -->
+      <div class="field mt-4">
+        <span class="table-chip">Custom Integrations</span>
+        <div class="mt-4">
+          <label>Line 1</label>
+          <div class="grid-3">
+            <select id="ciSku1"></select>
+            <input id="ciQty1" type="number" min="0" step="1" placeholder="# packs" />
+            <input id="ciDisc1" type="number" min="0" max="100" step="0.1" placeholder="% discount" />
+          </div>
+        </div>
+        <div class="mt-4">
+          <label>Line 2</label>
+          <div class="grid-3">
+            <select id="ciSku2"></select>
+            <input id="ciQty2" type="number" min="0" step="1" placeholder="# packs" />
+            <input id="ciDisc2" type="number" min="0" max="100" step="0.1" placeholder="% discount" />
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Credits -->
+      <div class="field mt-4">
+        <span class="table-chip">AI Credits</span>
+        <div class="mt-4">
+          <label>Line 1</label>
+          <div class="grid-3">
+            <select id="aiSku1"></select>
+            <input id="aiQty1" type="number" min="0" step="1" placeholder="# packs" />
+            <input id="aiDisc1" type="number" min="0" max="100" step="0.1" placeholder="% discount" />
+          </div>
+        </div>
+        <div class="mt-4">
+          <label>Line 2</label>
+          <div class="grid-3">
+            <select id="aiSku2"></select>
+            <input id="aiQty2" type="number" min="0" step="1" placeholder="# packs" />
+            <input id="aiDisc2" type="number" min="0" max="100" step="0.1" placeholder="% discount" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Pipesign -->
+      <div class="field mt-4">
+        <span class="table-chip">Pipesign</span>
+        <div class="mt-4">
+          <label>Pipesign line</label>
+          <div class="grid-3">
+            <select id="psSku1"></select>
+            <input id="psQty1" type="number" min="0" step="1" placeholder="# packs" />
+            <input id="psDisc1" type="number" min="0" max="100" step="0.1" placeholder="% discount" />
+          </div>
+        </div>
+      </div>
+
+      <button id="calcBtn" type="button">
+        <span class="icon">⚡</span>
+        Calculate deal
+      </button>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div class="card" id="resultsCard">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Deal outcome</div>
+          <div class="card-subtitle">MRR, margin, discount room and recommendations</div>
+        </div>
+      </div>
+
+      <div class="results-grid">
+        <div class="metric-card">
+          <div class="metric-title">Financials</div>
+          <div class="metric-value" id="netMrrDisplay">$0.00</div>
+          <div class="metric-sub" id="listMrrDisplay">List MRR: $0.00 • Discount: 0.0%</div>
+          <div class="mt-6">
+            <div class="usage-row">
+              <span>Margin</span>
+              <span class="value" id="marginDisplay">0.0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-title">Approval & limits</div>
+          <div class="flex-between mt-4">
+            <div>
+              <div class="metric-sub">Required margin</div>
+              <div class="metric-value secondary" id="requiredMarginDisplay">0.0%</div>
+            </div>
+            <div>
+              <div class="metric-sub">Max pre-approved discount</div>
+              <div class="metric-value secondary" id="maxDiscountDisplay">0.0%</div>
+              <div class="metric-sub" id="extraRoomDisplay">Extra room: 0.0 (p.p.)</div>
+            </div>
+          </div>
+          <div class="mt-6 flex-between">
+            <div id="statusChip" class="status-chip warn">
+              <span class="status-dot"></span>
+              <span id="statusText">Waiting for calculation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Usage vs recommendations</div>
+      <div class="usage-grid">
+        <div class="usage-card">
+          <div class="flex-between">
+            <span>Automation Jobs per card</span>
+            <span class="table-chip" id="ajGroupLabel">Group —</span>
+          </div>
+          <div class="usage-row">
+            <span>Suggested</span>
+            <span class="value" id="ajSuggested">-</span>
+          </div>
+          <div class="usage-row">
+            <span>Covered by plan</span>
+            <span class="value" id="ajCovered">-</span>
+          </div>
+          <div class="usage-row">
+            <span>Delta</span>
+            <span class="value" id="ajDelta">-</span>
+          </div>
+        </div>
+
+        <div class="usage-card">
+          <div class="flex-between">
+            <span>Integrations per card</span>
+            <span class="table-chip" id="intGroupLabel">Group —</span>
+          </div>
+          <div class="usage-row">
+            <span>Suggested</span>
+            <span class="value" id="intSuggested">-</span>
+          </div>
+          <div class="usage-row">
+            <span>Covered by plan</span>
+            <span class="value" id="intCovered">-</span>
+          </div>
+          <div class="usage-row">
+            <span>Delta</span>
+            <span class="value" id="intDelta">-</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Plan coverage vs usage estimate</div>
+      <table class="small-table mt-4" id="coverageTable">
+        <thead>
+        <tr>
+          <th>Product</th>
+          <th>Included in plan</th>
+          <th>Usage estimate</th>
+          <th>Need to contract</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr><td colspan="4" style="text-align:center;color:#9ca3af;padding:6px 0;">No usage data yet.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-title">What is included in the deal</div>
+      <table class="small-table mt-4" id="addonsTable">
+        <thead>
+        <tr>
+          <th>Type</th>
+          <th>SKU</th>
+          <th>Packs / Users</th>
+          <th>Units</th>
+          <th>MRR (list)</th>
+          <th>MRR (discounted)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:6px 0;">No items yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
